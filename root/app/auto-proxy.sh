@@ -2,7 +2,7 @@
 
 for DOCKER_HOST in ${DOCKER_HOSTS}; do
     AUTO_GEN=""
-    ENABLED_FILE="/auto-proxy/enabled_containers_$(echo ${DOCKER_HOST} | sed 's,.,_,g')"
+    ENABLED_FILE="/auto-proxy/enabled_containers_$(echo ${DOCKER_HOST} | sed 's,\.,_,g')"
     # figure out which containers to generate confs for or which confs to remove
     if [ ! -f ${ENABLED_FILE} ]; then
         docker ps --filter "label=swag=enable" --format "{{.Names}}" > ${ENABLED_FILE}
