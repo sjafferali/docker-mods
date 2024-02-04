@@ -6,7 +6,6 @@ env:
   ENDPOINT: "sjafferali/swag-auto-proxy"
   BRANCH: "swag-auto-proxy"
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
