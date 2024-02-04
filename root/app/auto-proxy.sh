@@ -120,10 +120,17 @@ DUDE
         if [ -z "${swag_address}" ]; then
             swag_address="${CONTAINER}"
         fi
+        if [ ! -z "${EXTERNAL_HOST}" ]; then
+            swag_address="${DOCKER_HOST}"
+        fi
         sed -i "s|<container_name>|${swag_address}|g" "/etc/nginx/http.d/auto-proxy-${CONTAINER}.subdomain.conf"
         echo "**** Setting upstream address ${swag_address} for ${CONTAINER} ****"
         if [ -z "${swag_port}" ]; then
-            swag_port=$(docker inspect ${CONTAINER} | jq -r '.[0].NetworkSettings.Ports | keys[0]' | sed 's|/.*||')
+            if [ -z "${EXTERNAL_HOST}" ]; then
+                swag_port=$(docker inspect ${CONTAINER} | jq -r '.[0].NetworkSettings.Ports | keys[0]' | sed 's|/.*||')
+            else
+                swag_port=$(docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}}{{(index $conf 0).HostPort}} {{end}}' ${CONTAINER})
+            fi
             if [ "${swag_port}" == "null" ]; then
                 echo "**** No exposed ports found for ${CONTAINER}. Setting reverse proxy port to 80. ****"
                 swag_port="80"
